@@ -12,15 +12,15 @@ async function generateInterViewReportController(req, res) {
     try {
         let resumeText = ""
 
-        // ✅ handle optional resume
-        if (req.file) {
+        // ✅ SAFE FILE HANDLING
+        if (req.file && req.file.buffer) {
             const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText()
             resumeText = resumeContent.text
         }
 
         const { selfDescription, jobDescription } = req.body
 
-        // ✅ validation
+        // ✅ VALIDATION
         if (!resumeText && !selfDescription) {
             return res.status(400).json({
                 message: "Provide either resume or self description"
@@ -47,7 +47,7 @@ async function generateInterViewReportController(req, res) {
         })
 
     } catch (err) {
-        console.error(err)
+        console.error("🔥 ERROR:", err)
         res.status(500).json({
             message: "Something went wrong"
         })
