@@ -61,11 +61,11 @@ const RoadMapDay = ({ day }) => (
 
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
- 
-    const [ activeNav, setActiveNav ] = useState('technical')
+     const [downloading, setDownloading] = useState(false)
+
+    const [activeNav, setActiveNav] = useState('technical')
     const { report, getReportById, loading, getResumePdf } = useInterview()
     const { interviewId } = useParams()
-
     
 
     useEffect(() => {
@@ -109,11 +109,18 @@ const Interview = () => {
                         ))}
                     </div>
                     <button
-                            onClick={handleDownloadResume}
-                            className='button primary-button'
-                        >
-                            Download Resume
-                        </button>
+    disabled={downloading}
+    onClick={async () => {
+        if (downloading) return
+
+        setDownloading(true)
+        await getResumePdf(interviewId)
+        setDownloading(false)
+    }}
+    className='button primary-button'
+>
+    {downloading ? "Downloading..." : "Download Resume"}
+</button>
                 </nav>
 
                 <div className='interview-divider' />
